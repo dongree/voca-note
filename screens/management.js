@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  TextInput,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 
 const Management = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState('file');
+  const [word, setWord] = useState('');
+  const [meaning, setMeaning] = useState('');
+  const [example, setExample] = useState('');
+
+  const createSomething = () => {};
+  const onChangeWord = () => {};
+  const onChangeMeaning = () => {};
+  const onChangeExample = () => {};
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -55,6 +68,83 @@ const Management = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => setModalVisible(true)}
+      >
+        <FontAwesome name="plus" size={30} color="white" />
+      </TouchableOpacity>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Create card or folder</Text>
+            <Picker
+              selectedValue={selectedType}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedType(itemValue)
+              }
+            >
+              <Picker.Item label="file" value="file" />
+              <Picker.Item label="folder" value="folder" />
+            </Picker>
+            {selectedType === 'file' ? (
+              <View>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeWord}
+                  value={word}
+                  placeholder="word"
+                ></TextInput>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeMeaning}
+                  value={meaning}
+                  placeholder="meaning"
+                ></TextInput>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeExample}
+                  value={example}
+                  placeholder="example"
+                ></TextInput>
+              </View>
+            ) : (
+              <View>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeWord}
+                  value={word}
+                  placeholder="name"
+                ></TextInput>
+              </View>
+            )}
+
+            <View style={styles.modalBtns}>
+              <TouchableOpacity
+                style={styles.modalBtn}
+                onPress={() => createSomething()}
+              >
+                <Text style={styles.modalBtnText}>Create</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalBtn}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.modalBtnText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -118,5 +208,75 @@ const styles = StyleSheet.create({
 
   cardBtn: {
     marginRight: 5,
+  },
+
+  addBtn: {
+    position: 'absolute',
+    backgroundColor: 'black',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    right: 40,
+    bottom: 40,
+  },
+
+  // modal
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    width: 300,
+    height: 350,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  modalBtns: {
+    flexDirection: 'row',
+  },
+  modalBtn: {
+    borderRadius: 20,
+    marginRight: 3,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: '#2196F3',
+  },
+
+  modalBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  input: {
+    backgroundColor: 'white',
+    padding: 9,
+    marginBottom: 15,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderColor: '#4f4f4f',
+    borderStyle: 'solid',
   },
 });
