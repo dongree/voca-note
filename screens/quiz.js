@@ -1,15 +1,36 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 const Quiz = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Go back</Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={styles.title}>Random Quiz</Text>
+        <TouchableOpacity
+          style={styles.goBackBtn}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.goBackBtnText}>Go back</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.folders}>
+        <View style={styles.folder}>
+          <Text style={styles.folderText}>Goodplace1</Text>
+        </View>
+        <View style={styles.folder}>
+          <Text style={styles.folderText}>Goodplace2</Text>
+        </View>
+        <View style={styles.folder}>
+          <Text style={styles.folderText}>Goodplace3</Text>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -19,20 +40,53 @@ export default Quiz;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
     backgroundColor: '#ff8e47',
   },
 
-  button: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 25,
+    marginBottom: 15,
+  },
+
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+
+  goBackBtn: {
     backgroundColor: '#f5b342',
-    marginBottom: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 10,
   },
 
-  buttonText: {
-    fontSize: 20,
+  goBackBtnText: {
+    fontSize: 15,
+  },
+
+  folders: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    flexGrow: 1,
+  },
+
+  folder: {
+    backgroundColor: '#ffcb70',
+    width: '48%',
+    margin: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 18,
+    borderRadius: 10,
+  },
+
+  folderText: {
+    fontSize: 18,
   },
 });
