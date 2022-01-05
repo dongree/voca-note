@@ -14,9 +14,97 @@ import { FontAwesome } from '@expo/vector-icons';
 const Management = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedType, setSelectedType] = useState('file');
+  const [cards, setCard] = useState({
+    1: {
+      type: 'file',
+      word: 'apple',
+      meaning: '사과',
+      example: 'I have an apple',
+    },
+    2: {
+      type: 'file',
+      word: 'banana',
+      meaning: '바나나',
+      example: 'I like to eat banana',
+    },
+    3: {
+      type: 'folder',
+      name: 'animals',
+      datas: {
+        5: {
+          type: 'file',
+          word: 'lion',
+          meaning: '사자',
+          example: 'My favorite animal is a lion',
+        },
+        6: {
+          type: 'file',
+          word: 'tiger',
+          meaning: '호랑이',
+          example: 'A tiger is rouring',
+        },
+        7: {
+          type: 'folder',
+          name: 'birds',
+          datas: {
+            8: {
+              type: 'file',
+              word: 'eagle',
+              meaning: '독수리',
+              example: 'eagles soaring overhead',
+            },
+            9: {
+              type: 'file',
+              word: 'sparrow',
+              meaning: '참새',
+              example: 'Sparrows are chirping',
+            },
+          },
+        },
+      },
+    },
+    4: {
+      type: 'file',
+      word: 'consider',
+      meaning: '고려하다, ~로 여기다',
+      example: 'She considered her options.',
+    },
+    10: {
+      type: 'folder',
+      name: 'good place',
+      datas: {
+        12: {
+          type: 'file',
+          word: 'good',
+          meaning: '좋은',
+          example: 'good job',
+        },
+        13: {
+          type: 'file',
+          word: 'place',
+          meaning: '장소',
+          example: 'There are good place and bad place afterlife',
+        },
+      },
+    },
+  });
+  const [scrollviewData, setScrollviewData] = useState(cards);
+  const [backCount, setBackCount] = useState(0);
+  const [preDatas, setPreDatas] = useState([cards]);
+  const [cardModalVisible, setCardModalVisible] = useState(false);
+  const [cardModalData, setCardModalData] = useState({});
   const [word, setWord] = useState('');
   const [meaning, setMeaning] = useState('');
   const [example, setExample] = useState('');
+
+  const showCard = card => {
+    setCardModalData({
+      word: card.word,
+      meaning: card.meaning,
+      example: card.example,
+    });
+    setCardModalVisible(true);
+  };
 
   const createSomething = () => {};
   const onChangeWord = () => {};
@@ -34,40 +122,45 @@ const Management = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.cards}>
-        <View style={styles.card}>
-          <Text style={styles.cardText}>Apple</Text>
-          <View style={styles.cardBtns}>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="pencil" size={24} color="black" />
+        {Object.keys(scrollviewData).map(key =>
+          scrollviewData[key].type === 'file' ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.card}
+              key={key}
+              onPress={() => showCard(scrollviewData[key])}
+            >
+              <Text style={styles.cardText}>{scrollviewData[key].word}</Text>
+              <View style={styles.cardBtns}>
+                <TouchableOpacity style={styles.cardBtn}>
+                  <FontAwesome name="pencil" size={24} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cardBtn}>
+                  <FontAwesome name="remove" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="remove" size={24} color="black" />
+          ) : (
+            // folder
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.folder}
+              key={key}
+              // onPress={() => console.log(cards[key].datas)}
+              onPress={() => {
+                const newPreDatas = preDatas;
+                newPreDatas.push(scrollviewData);
+                setPreDatas(newPreDatas);
+                setScrollviewData(scrollviewData[key].datas);
+                setBackCount(backCount + 1);
+              }}
+            >
+              <Text style={styles.folderText}>{scrollviewData[key].name}</Text>
             </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardText}>Banana</Text>
-          <View style={styles.cardBtns}>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="pencil" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="remove" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardText}>Melon</Text>
-          <View style={styles.cardBtns}>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="pencil" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cardBtn}>
-              <FontAwesome name="remove" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
+          )
+        )}
       </ScrollView>
+
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => setModalVisible(true)}
@@ -75,6 +168,58 @@ const Management = ({ navigation }) => {
         <FontAwesome name="plus" size={30} color="white" />
       </TouchableOpacity>
 
+      {backCount !== 0 ? (
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => {
+            setBackCount(backCount - 1);
+            const newPreDatas = preDatas;
+            setScrollviewData(newPreDatas.pop());
+            setPreDatas(newPreDatas);
+          }}
+        >
+          <FontAwesome name="arrow-left" size={24} color="white" />
+        </TouchableOpacity>
+      ) : null}
+
+      {/* card modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={cardModalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setCardModalVisible(!cardModalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.cardModalView}>
+            <View>
+              <Text style={styles.cardWord}>{cardModalData.word}</Text>
+              <Text style={styles.cardMeaning}>{cardModalData.meaning}</Text>
+              <Text style={styles.cardExample}>
+                ex | {cardModalData.example}
+              </Text>
+            </View>
+            <View style={styles.cardModalBtns}>
+              <TouchableOpacity
+                style={styles.cardModalBtn}
+                onPress={() => createSomething()}
+              >
+                <Text style={styles.cardModalBtnText}>Fix</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cardModalBtn}
+                onPress={() => setCardModalVisible(!cardModalVisible)}
+              >
+                <Text style={styles.cardModalBtnText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* add modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -193,9 +338,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 3,
+    margin: 5,
     padding: 7,
-    borderRadius: 10,
   },
 
   cardText: {
@@ -222,6 +366,35 @@ const styles = StyleSheet.create({
     bottom: 40,
   },
 
+  backBtn: {
+    position: 'absolute',
+    backgroundColor: 'black',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    left: 40,
+    bottom: 40,
+  },
+
+  folder: {
+    backgroundColor: 'orange',
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 5,
+    padding: 7,
+    borderRadius: 10,
+  },
+
+  folderText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: '#bd6128',
+  },
+
   // modal
   centeredView: {
     flex: 1,
@@ -234,7 +407,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     width: 300,
-    height: 350,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -252,6 +424,7 @@ const styles = StyleSheet.create({
 
   modalBtns: {
     flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   modalBtn: {
     borderRadius: 20,
@@ -266,10 +439,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
+
   input: {
     backgroundColor: 'white',
     padding: 9,
@@ -278,5 +448,57 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#4f4f4f',
     borderStyle: 'solid',
+  },
+
+  // card modal
+  cardModalView: {
+    margin: 20,
+    backgroundColor: 'tomato',
+    borderRadius: 5,
+    padding: 20,
+    width: 350,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  cardWord: {
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
+
+  cardMeaning: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  cardExample: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  cardModalBtns: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 20,
+  },
+  cardModalBtn: {
+    borderRadius: 20,
+    marginRight: 3,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: 'orange',
+  },
+
+  cardModalBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
