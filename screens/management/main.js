@@ -5,94 +5,69 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Modal,
-  TextInput,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import CardModal from './cardModal';
 import AddModal from './addModal';
 
 const Management = ({ navigation }) => {
-  const [cards, setCard] = useState({
+  const [datas, setDatas] = useState({
     1: {
       type: 'file',
       word: 'apple',
       meaning: '사과',
       example: 'I have an apple',
+      vKey: 0,
     },
     2: {
       type: 'file',
       word: 'banana',
       meaning: '바나나',
       example: 'I like to eat banana',
+      vKey: 0,
     },
     3: {
       type: 'folder',
-      name: 'animals',
-      datas: {
-        5: {
-          type: 'file',
-          word: 'lion',
-          meaning: '사자',
-          example: 'My favorite animal is a lion',
-        },
-        6: {
-          type: 'file',
-          word: 'tiger',
-          meaning: '호랑이',
-          example: 'A tiger is rouring',
-        },
-        7: {
-          type: 'folder',
-          name: 'birds',
-          datas: {
-            8: {
-              type: 'file',
-              word: 'eagle',
-              meaning: '독수리',
-              example: 'eagles soaring overhead',
-            },
-            9: {
-              type: 'file',
-              word: 'sparrow',
-              meaning: '참새',
-              example: 'Sparrows are chirping',
-            },
-          },
-        },
-      },
+      name: 'animal',
+      vKey: 0,
     },
     4: {
       type: 'file',
-      word: 'consider',
-      meaning: '고려하다, ~로 여기다',
-      example: 'She considered her options.',
+      word: 'lion',
+      meaning: '사자',
+      example: 'I have an lion',
+      vKey: 3,
     },
-    10: {
+    5: {
+      type: 'file',
+      word: 'tiger',
+      meaning: '호랑이',
+      example: 'I like to eat banana',
+      vKey: 3,
+    },
+    6: {
       type: 'folder',
-      name: 'good place',
-      datas: {
-        12: {
-          type: 'file',
-          word: 'good',
-          meaning: '좋은',
-          example: 'good job',
-        },
-        13: {
-          type: 'file',
-          word: 'place',
-          meaning: '장소',
-          example: 'There are good place and bad place afterlife',
-        },
-      },
+      name: 'birds',
+      vKey: 3,
+    },
+    7: {
+      type: 'file',
+      word: 'eagle',
+      meaning: '독수리',
+      example: 'I like to eat banana',
+      vKey: 6,
+    },
+    8: {
+      type: 'file',
+      word: 'sparrow',
+      meaning: '참새',
+      example: 'I like to eat banana',
+      vKey: 6,
     },
   });
 
-  // go back
-  const [scrollviewData, setScrollviewData] = useState(cards);
   const [backCount, setBackCount] = useState(0);
-  const [preDatas, setPreDatas] = useState([cards]);
+  const [preKeys, setPrekeys] = useState([0]);
 
   // add modal
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -118,6 +93,17 @@ const Management = ({ navigation }) => {
     setAddModalVisible(visible);
   };
 
+  const handleCreate = (type, word, meaning, example, name) => {
+    const newData = {
+      ...datas,
+      [Date.now()]:
+        type === 'file'
+          ? { type, word, meaning, example, vKey: preKeys[preKeys.length - 1] }
+          : { type, name, datas: {}, vKey: preKeys[preKeys.length - 1] },
+    };
+    setDatas(newData);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -130,42 +116,42 @@ const Management = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.cards}>
-        {Object.keys(scrollviewData).map(key =>
-          scrollviewData[key].type === 'file' ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.card}
-              key={key}
-              onPress={() => showCard(scrollviewData[key])}
-            >
-              <Text style={styles.cardText}>{scrollviewData[key].word}</Text>
-              <View style={styles.cardBtns}>
-                <TouchableOpacity style={styles.cardBtn}>
-                  <FontAwesome name="pencil" size={24} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.cardBtn}>
-                  <FontAwesome name="remove" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ) : (
-            // folder
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.folder}
-              key={key}
-              // onPress={() => console.log(cards[key].datas)}
-              onPress={() => {
-                const newPreDatas = preDatas;
-                newPreDatas.push(scrollviewData);
-                setPreDatas(newPreDatas);
-                setScrollviewData(scrollviewData[key].datas);
-                setBackCount(backCount + 1);
-              }}
-            >
-              <Text style={styles.folderText}>{scrollviewData[key].name}</Text>
-            </TouchableOpacity>
-          )
+        {Object.keys(datas).map(key =>
+          datas[key].vKey === preKeys[preKeys.length - 1] ? (
+            datas[key].type === 'file' ? (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.card}
+                key={key}
+                onPress={() => showCard(datas[key])}
+              >
+                <Text style={styles.cardText}>{datas[key].word}</Text>
+                <View style={styles.cardBtns}>
+                  <TouchableOpacity style={styles.cardBtn}>
+                    <FontAwesome name="pencil" size={24} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.cardBtn}>
+                    <FontAwesome name="remove" size={24} color="black" />
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              // folder
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.folder}
+                key={key}
+                onPress={() => {
+                  const newPreKeys = preKeys;
+                  newPreKeys.push(Number(key));
+                  setPrekeys(newPreKeys);
+                  setBackCount(backCount + 1);
+                }}
+              >
+                <Text style={styles.folderText}>{datas[key].name}</Text>
+              </TouchableOpacity>
+            )
+          ) : null
         )}
       </ScrollView>
 
@@ -181,9 +167,9 @@ const Management = ({ navigation }) => {
           style={styles.backBtn}
           onPress={() => {
             setBackCount(backCount - 1);
-            const newPreDatas = preDatas;
-            setScrollviewData(newPreDatas.pop());
-            setPreDatas(newPreDatas);
+            const newPreKeys = preKeys;
+            newPreKeys.pop();
+            setPrekeys(newPreKeys);
           }}
         >
           <FontAwesome name="arrow-left" size={24} color="white" />
@@ -199,6 +185,7 @@ const Management = ({ navigation }) => {
       <AddModal
         visible={addModalVisible}
         changeVisible={handleAddModalVisible}
+        createData={handleCreate}
       />
     </View>
   );
