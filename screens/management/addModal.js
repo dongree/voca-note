@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const AddModal = ({ visible, changeVisible }) => {
+const AddModal = ({ visible, changeVisible, createData }) => {
   const [selectedType, setSelectedType] = useState('file');
   const [word, setWord] = useState('');
   const [meaning, setMeaning] = useState('');
@@ -17,19 +17,28 @@ const AddModal = ({ visible, changeVisible }) => {
 
   const [folderName, setFolderName] = useState('');
 
-  const handleVisible = v => {
-    changeVisible(v);
-  };
-
-  const handlePicker = (itemValue, itemIndex) => {
-    setSelectedType(itemValue);
+  const cleanTextInput = () => {
     setWord('');
     setMeaning('');
     setExample('');
     setFolderName('');
   };
 
-  const createSomething = () => {};
+  const handleVisible = v => {
+    changeVisible(v);
+    cleanTextInput();
+  };
+
+  const handlePicker = (itemValue, itemIndex) => {
+    setSelectedType(itemValue);
+    cleanTextInput();
+  };
+
+  const handleCreate = () => {
+    createData(selectedType, word, meaning, example, folderName);
+    handleVisible(!visible);
+    cleanTextInput();
+  };
 
   const handleWord = e => setWord(e);
   const handleMeaning = e => setMeaning(e);
@@ -93,7 +102,7 @@ const AddModal = ({ visible, changeVisible }) => {
           <View style={styles.addModalBtns}>
             <TouchableOpacity
               style={styles.addModalBtn}
-              onPress={() => createSomething()}
+              onPress={() => handleCreate()}
             >
               <Text style={styles.addModalBtnText}>Create</Text>
             </TouchableOpacity>
