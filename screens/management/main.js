@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import CardModal from './cardModal';
@@ -104,6 +105,51 @@ const Management = ({ navigation }) => {
     setDatas(newData);
   };
 
+  const deleteCard = key => {
+    Alert.alert('Delete Card', 'Are you sure?', [
+      { text: 'Cancel' },
+      {
+        text: "I'm Sure",
+        onPress: () => {
+          const newData = { ...datas };
+          delete newData[key];
+          setDatas(newData);
+        },
+      },
+    ]);
+  };
+
+  const deleteIn = (newData, folderKey) => {
+    Object.keys(newData).map(key => {
+      if (datas[key].vKey === Number(folderKey)) {
+        if (datas[key].type === 'folder') {
+          const temp = newData;
+          newData = deleteIn(temp, key);
+        }
+        delete newData[key];
+      }
+    });
+    return newData;
+  };
+
+  const deleteFolder = folderKey => {
+    Alert.alert(
+      'Delete Folder',
+      'If you delete this folder, all data in the folder will be deleted. Are you sure?',
+      [
+        { text: 'Cancel' },
+        {
+          text: "I'm Sure",
+          onPress: () => {
+            const newData = deleteIn({ ...datas }, folderKey);
+            delete newData[folderKey];
+            setDatas(newData);
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -130,7 +176,10 @@ const Management = ({ navigation }) => {
                   <TouchableOpacity style={styles.cardBtn}>
                     <FontAwesome name="pencil" size={24} color="black" />
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.cardBtn}>
+                  <TouchableOpacity
+                    style={styles.cardBtn}
+                    onPress={() => deleteCard(key)}
+                  >
                     <FontAwesome name="remove" size={24} color="black" />
                   </TouchableOpacity>
                 </View>
@@ -149,6 +198,12 @@ const Management = ({ navigation }) => {
                 }}
               >
                 <Text style={styles.folderText}>{datas[key].name}</Text>
+                <TouchableOpacity
+                  style={styles.folderBtn}
+                  onPress={() => deleteFolder(key)}
+                >
+                  <FontAwesome name="remove" size={24} color="black" />
+                </TouchableOpacity>
               </TouchableOpacity>
             )
           ) : null
@@ -277,10 +332,15 @@ const styles = StyleSheet.create({
   folder: {
     backgroundColor: 'orange',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     margin: 5,
     padding: 7,
     borderRadius: 10,
+  },
+
+  folderBtn: {
+    marginRight: 5,
   },
 
   folderText: {
