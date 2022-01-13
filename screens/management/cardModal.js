@@ -1,11 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 
-const CardModal = ({ data, visible, changeVisible }) => {
+const CardModal = ({ data, visible, changeVisible, editData }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [word, setWord] = useState();
+  const [meaning, setMeaning] = useState();
+  const [example, setExample] = useState();
+
+  useEffect(() => {
+    setWord(data.word);
+    setMeaning(data.meaning);
+    setExample(data.example);
+  }, [data]);
+
   const handleVisible = v => {
     changeVisible(v);
+    if (editMode) {
+      setEditMode(!editMode);
+    }
   };
+
+  const handleEdit = () => {
+    if (editMode) {
+      const newData = { type: 'file', word, meaning, example, vKey: data.vKey };
+      editData(newData);
+    }
+    setEditMode(!editMode);
+  };
+
+  const handleWord = e => setWord(e);
+  const handleMeaning = e => setMeaning(e);
+  const handleExample = e => setExample(e);
 
   return (
     <Modal
@@ -19,17 +52,40 @@ const CardModal = ({ data, visible, changeVisible }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.cardModalView}>
-          <View>
-            <Text style={styles.cardWord}>{data.word}</Text>
-            <Text style={styles.cardMeaning}>{data.meaning}</Text>
-            <Text style={styles.cardExample}>ex | {data.example}</Text>
-          </View>
+          {editMode ? (
+            <View>
+              <TextInput
+                style={styles.inputWord}
+                onChangeText={handleWord}
+                value={word}
+              ></TextInput>
+              <TextInput
+                style={styles.inputMeaning}
+                onChangeText={handleMeaning}
+                value={meaning}
+              ></TextInput>
+              <TextInput
+                style={styles.inputExample}
+                onChangeText={handleExample}
+                value={example}
+              ></TextInput>
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.cardWord}>{word}</Text>
+              <Text style={styles.cardMeaning}>{meaning}</Text>
+              <Text style={styles.cardExample}>ex | {example}</Text>
+            </View>
+          )}
+
           <View style={styles.cardModalBtns}>
             <TouchableOpacity
               style={styles.cardModalBtn}
-              onPress={() => createSomething()}
+              onPress={() => handleEdit()}
             >
-              <Text style={styles.cardModalBtnText}>Fix</Text>
+              <Text style={styles.cardModalBtnText}>
+                {editMode ? 'Done' : 'Edit'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.cardModalBtn}
@@ -72,16 +128,37 @@ const styles = StyleSheet.create({
   cardWord: {
     fontSize: 40,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
 
   cardMeaning: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
 
   cardExample: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 4,
+  },
+
+  inputWord: {
+    fontSize: 40,
+    backgroundColor: 'white',
+    marginBottom: 4,
+  },
+
+  inputMeaning: {
+    fontSize: 20,
+    backgroundColor: 'white',
+    marginBottom: 4,
+  },
+
+  inputExample: {
+    fontSize: 18,
+    backgroundColor: 'white',
+    marginBottom: 4,
   },
 
   cardModalBtns: {

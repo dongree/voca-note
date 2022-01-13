@@ -76,14 +76,12 @@ const Management = ({ navigation }) => {
   // card modal
   const [cardModalVisible, setCardModalVisible] = useState(false);
   const [cardModalData, setCardModalData] = useState({});
+  const [cardModalKey, setCardModalKey] = useState();
 
-  const showCard = card => {
-    setCardModalData({
-      word: card.word,
-      meaning: card.meaning,
-      example: card.example,
-    });
+  const showCard = (card, key) => {
+    setCardModalData({ ...card });
     setCardModalVisible(true);
+    setCardModalKey(key);
   };
 
   const handleCardModalVisible = visible => {
@@ -150,6 +148,11 @@ const Management = ({ navigation }) => {
     );
   };
 
+  const handleEdit = editData => {
+    const newData = { ...datas, [cardModalKey]: editData };
+    setDatas(newData);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -169,13 +172,10 @@ const Management = ({ navigation }) => {
                 activeOpacity={0.8}
                 style={styles.card}
                 key={key}
-                onPress={() => showCard(datas[key])}
+                onPress={() => showCard(datas[key], key)}
               >
                 <Text style={styles.cardText}>{datas[key].word}</Text>
                 <View style={styles.cardBtns}>
-                  <TouchableOpacity style={styles.cardBtn}>
-                    <FontAwesome name="pencil" size={24} color="black" />
-                  </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.cardBtn}
                     onPress={() => deleteCard(key)}
@@ -235,6 +235,7 @@ const Management = ({ navigation }) => {
         data={cardModalData}
         visible={cardModalVisible}
         changeVisible={handleCardModalVisible}
+        editData={handleEdit}
       />
 
       <AddModal
