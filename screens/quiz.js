@@ -7,17 +7,11 @@ import {
   ScrollView,
 } from 'react-native';
 
-const Quiz = ({ navigation }) => {
+const Quiz = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Random Quiz</Text>
-        <TouchableOpacity
-          style={styles.goBackBtn}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.goBackBtnText}>Go back</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.folders}>
@@ -46,7 +40,6 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 25,
     marginBottom: 15,
@@ -55,17 +48,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-  },
-
-  goBackBtn: {
-    backgroundColor: '#f5b342',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-
-  goBackBtnText: {
-    fontSize: 15,
   },
 
   folders: {

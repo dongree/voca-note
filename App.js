@@ -1,26 +1,30 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, ScrollView, Dimensions, View } from 'react-native';
 import Home from './screens/home';
 import Management from './screens/management/main';
 import Quiz from './screens/quiz';
 
-const Stack = createNativeStackNavigator();
-
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Management" component={Management} />
-        <Stack.Screen name="Quiz" component={Quiz} />
-      </Stack.Navigator>
-    </NavigationContainer>
-
+    <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator={true}>
+      <View style={styles.screen}>
+        <Home />
+      </View>
+      <View style={styles.screen}>
+        <Management />
+      </View>
+      <View style={styles.screen}>
+        <Quiz />
+      </View>
+    </ScrollView>
     // <StatusBar style="auto" />
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    width: SCREEN_WIDTH,
+  },
+});

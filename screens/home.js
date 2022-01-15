@@ -1,19 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-const Home = ({ navigation }) => {
+const Home = () => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Management')}
-      >
+      <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Card management</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Quiz')}
-      >
+      <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Random Quiz</Text>
       </TouchableOpacity>
     </View>

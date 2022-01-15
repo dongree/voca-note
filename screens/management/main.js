@@ -11,7 +11,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import CardModal from './cardModal';
 import AddModal from './addModal';
 
-const Management = ({ navigation }) => {
+const Management = () => {
   const [datas, setDatas] = useState({
     1: {
       type: 'file',
@@ -157,12 +157,6 @@ const Management = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Card management</Text>
-        <TouchableOpacity
-          style={styles.goBackBtn}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.goBackBtnText}>Go back</Text>
-        </TouchableOpacity>
       </View>
       <ScrollView style={styles.cards}>
         {Object.keys(datas).map(key =>
@@ -258,7 +252,6 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 25,
     marginBottom: 15,
@@ -267,17 +260,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-  },
-
-  goBackBtn: {
-    backgroundColor: '#f5b342',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-
-  goBackBtnText: {
-    fontSize: 15,
   },
 
   cards: {
