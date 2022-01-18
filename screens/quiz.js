@@ -1,30 +1,41 @@
-import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-const Quiz = () => {
+const Quiz = ({ cards, finishQuiz }) => {
+  const [index, setIndex] = useState(0);
+  const [word, setWord] = useState();
+  const [meaning, setMeaning] = useState();
+  const [meaningVisible, setMeaningVisible] = useState(false);
+
+  useEffect(() => {
+    setWord(cards[index].word);
+    setMeaning(cards[index].meaning);
+  }, [index]);
+
+  const handleIndex = () => {
+    if (meaningVisible && index < cards.length - 1) {
+      setIndex(index + 1);
+    } else if (meaningVisible && index === cards.length - 1) {
+      finishQuiz(false);
+    }
+    setMeaningVisible(!meaningVisible);
+  };
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Random Quiz</Text>
+    <View style={styles.card}>
+      <Text style={styles.number}>
+        {index + 1}/{cards.length}
+      </Text>
+      <View style={styles.info}>
+        <Text style={styles.cardWord}>{word}</Text>
+        <Text style={styles.cardMeaning}>
+          {meaningVisible ? meaning : '            '}
+        </Text>
       </View>
-
-      <ScrollView contentContainerStyle={styles.folders}>
-        <View style={styles.folder}>
-          <Text style={styles.folderText}>Goodplace1</Text>
-        </View>
-        <View style={styles.folder}>
-          <Text style={styles.folderText}>Goodplace2</Text>
-        </View>
-        <View style={styles.folder}>
-          <Text style={styles.folderText}>Goodplace3</Text>
-        </View>
-      </ScrollView>
+      <TouchableOpacity style={styles.btn} onPress={handleIndex}>
+        <Text style={styles.btnText}>
+          {meaningVisible ? 'next word' : '확인하기'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -32,43 +43,38 @@ const Quiz = () => {
 export default Quiz;
 
 const styles = StyleSheet.create({
-  container: {
+  card: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#ff8e47',
-  },
-
-  header: {
-    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    marginTop: 25,
-    marginBottom: 15,
+    backgroundColor: 'tomato',
+    borderRadius: 10,
+    width: '100%',
+    height: '100%',
+    padding: 20,
   },
 
-  title: {
-    fontSize: 25,
-    fontWeight: 'bold',
+  number: {
+    fontSize: 30,
   },
-
-  folders: {
+  info: {
+    alignItems: 'center',
+  },
+  cardWord: {
+    fontSize: 60,
+    marginBottom: 40,
+  },
+  cardMeaning: {
+    fontSize: 50,
     backgroundColor: 'white',
-    borderRadius: 10,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    flexGrow: 1,
   },
-
-  folder: {
-    backgroundColor: '#ffcb70',
-    width: '48%',
-    margin: 3,
-    paddingHorizontal: 7,
-    paddingVertical: 18,
-    borderRadius: 10,
+  btn: {
+    backgroundColor: 'orange',
+    padding: 10,
+    borderRadius: 20,
+    alignItems: 'center',
   },
-
-  folderText: {
-    fontSize: 18,
+  btnText: {
+    fontSize: 20,
   },
 });

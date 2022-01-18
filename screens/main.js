@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Pressable,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import CardModal from './cardModal';
-import AddModal from './addModal';
+import CardModal from './modal/cardModal';
+import AddModal from './modal/addModal';
+import Quiz from './quiz';
 
 const Management = () => {
   const [datas, setDatas] = useState({
@@ -43,7 +45,77 @@ const Management = () => {
       type: 'file',
       word: 'tiger',
       meaning: '호랑이',
-      example: 'I like to eat banana',
+      example: 'I like tigers',
+      vKey: 3,
+    },
+    12: {
+      type: 'file',
+      word: 'elephant',
+      meaning: '코끼리',
+      example: 'A big elephant',
+      vKey: 3,
+    },
+    13: {
+      type: 'file',
+      word: 'dog',
+      meaning: '개',
+      example: 'My dog is so cute',
+      vKey: 3,
+    },
+    14: {
+      type: 'file',
+      word: 'cat',
+      meaning: '고양이',
+      example: 'I like cats more than dogs',
+      vKey: 3,
+    },
+    15: {
+      type: 'file',
+      word: 'cow',
+      meaning: '소',
+      example: 'Two cows',
+      vKey: 3,
+    },
+    16: {
+      type: 'file',
+      word: 'sheep',
+      meaning: '양',
+      example: 'a flock of sheep',
+      vKey: 3,
+    },
+    17: {
+      type: 'file',
+      word: 'horse',
+      meaning: '말',
+      example: 'I rode a horse yesterday',
+      vKey: 3,
+    },
+    18: {
+      type: 'file',
+      word: 'donkey',
+      meaning: '당나귀',
+      example: 'I rode a donkey yesterday',
+      vKey: 3,
+    },
+    19: {
+      type: 'file',
+      word: 'cheetah',
+      meaning: '치타',
+      example: 'Cheetahs are fast',
+      vKey: 3,
+    },
+    20: {
+      type: 'file',
+      word: 'crocodile',
+      meaning: '악어',
+      example: "I'm scared of crocodiles",
+      vKey: 3,
+    },
+    21: {
+      type: 'file',
+      word: 'camel',
+      meaning: '낙타',
+      example: 'two camels',
       vKey: 3,
     },
     6: {
@@ -77,6 +149,11 @@ const Management = () => {
   const [cardModalVisible, setCardModalVisible] = useState(false);
   const [cardModalData, setCardModalData] = useState({});
   const [cardModalKey, setCardModalKey] = useState();
+
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizStart, setQuizStart] = useState(false);
+
+  const [quizCards, setQuizCards] = useState([]);
 
   const showCard = (card, key) => {
     setCardModalData({ ...card });
@@ -153,63 +230,114 @@ const Management = () => {
     setDatas(newData);
   };
 
+  const handleQuizMode = () => {
+    if (!quizMode) {
+      Alert.alert(
+        'Qize Mode',
+        'Long press a folder you want to quiz and then start the quiz.',
+        [{ text: 'OK' }]
+      );
+    }
+    if (quizStart) {
+      setQuizStart(!quizStart);
+    }
+    setQuizMode(!quizMode);
+  };
+
+  const selectQuizFolder = folderKey => {
+    if (quizMode) {
+      const newQuizCards = [];
+      Object.keys(datas).map(key => {
+        if (
+          datas[key].vKey === Number(folderKey) &&
+          datas[key].type === 'file'
+        ) {
+          newQuizCards.push(datas[key]);
+        }
+      });
+      setQuizCards(newQuizCards);
+      setQuizStart(true);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Card management</Text>
+        <Text style={styles.title}>
+          {quizMode ? 'Random Quiz' : 'Card management'}
+        </Text>
+        <TouchableOpacity
+          style={styles.qizeBtn}
+          onPress={() => handleQuizMode()}
+        >
+          <Text style={styles.qizeBtnText}>{quizMode ? 'Exit' : 'Quiz'}</Text>
+        </TouchableOpacity>
       </View>
-      <ScrollView style={styles.cards}>
-        {Object.keys(datas).map(key =>
-          datas[key].vKey === preKeys[preKeys.length - 1] ? (
-            datas[key].type === 'file' ? (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.card}
-                key={key}
-                onPress={() => showCard(datas[key], key)}
-              >
-                <Text style={styles.cardText}>{datas[key].word}</Text>
-                <View style={styles.cardBtns}>
+      {!quizStart ? (
+        <ScrollView style={styles.cards}>
+          {Object.keys(datas).map(key =>
+            datas[key].vKey === preKeys[preKeys.length - 1] ? (
+              datas[key].type === 'file' ? (
+                <Pressable
+                  style={{
+                    ...styles.card,
+                    backgroundColor: quizMode ? '#993b29' : 'tomato',
+                  }}
+                  key={key}
+                  onPress={() => showCard(datas[key], key)}
+                  disabled={quizMode ? true : false}
+                >
+                  <Text style={styles.cardText}>{datas[key].word}</Text>
+                  <View style={styles.cardBtns}>
+                    <TouchableOpacity
+                      style={styles.cardBtn}
+                      onPress={() => deleteCard(key)}
+                    >
+                      <FontAwesome name="remove" size={24} color="black" />
+                    </TouchableOpacity>
+                  </View>
+                </Pressable>
+              ) : (
+                // folder
+                <Pressable
+                  style={styles.folder}
+                  key={key}
+                  onPress={() => {
+                    const newPreKeys = preKeys;
+                    newPreKeys.push(Number(key));
+                    setPrekeys(newPreKeys);
+                    setBackCount(backCount + 1);
+                  }}
+                  onLongPress={() => selectQuizFolder(key)}
+                >
+                  <Text style={styles.folderText}>{datas[key].name}</Text>
                   <TouchableOpacity
-                    style={styles.cardBtn}
-                    onPress={() => deleteCard(key)}
+                    style={styles.folderBtn}
+                    onPress={() => deleteFolder(key)}
                   >
                     <FontAwesome name="remove" size={24} color="black" />
                   </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            ) : (
-              // folder
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.folder}
-                key={key}
-                onPress={() => {
-                  const newPreKeys = preKeys;
-                  newPreKeys.push(Number(key));
-                  setPrekeys(newPreKeys);
-                  setBackCount(backCount + 1);
-                }}
-              >
-                <Text style={styles.folderText}>{datas[key].name}</Text>
-                <TouchableOpacity
-                  style={styles.folderBtn}
-                  onPress={() => deleteFolder(key)}
-                >
-                  <FontAwesome name="remove" size={24} color="black" />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            )
-          ) : null
-        )}
-      </ScrollView>
-
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => setAddModalVisible(true)}
-      >
-        <FontAwesome name="plus" size={30} color="white" />
-      </TouchableOpacity>
+                </Pressable>
+              )
+            ) : null
+          )}
+        </ScrollView>
+      ) : (
+        <Quiz
+          cards={quizCards}
+          finishQuiz={end => {
+            setQuizStart(end);
+            setQuizMode(end);
+          }}
+        />
+      )}
+      {!quizMode ? (
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => setAddModalVisible(true)}
+        >
+          <FontAwesome name="plus" size={30} color="white" />
+        </TouchableOpacity>
+      ) : null}
 
       {backCount !== 0 ? (
         <TouchableOpacity
@@ -252,6 +380,7 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 25,
     marginBottom: 15,
@@ -262,18 +391,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  qizeBtn: {
+    backgroundColor: '#f5b342',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+
+  qizeBtnText: {
+    fontSize: 15,
+  },
+
   cards: {
     backgroundColor: 'white',
     borderRadius: 10,
   },
 
   card: {
-    backgroundColor: 'tomato',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 5,
+    margin: 4,
     padding: 7,
+    borderRadius: 5,
   },
 
   cardText: {
@@ -317,7 +457,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 5,
+    margin: 4,
     padding: 7,
     borderRadius: 10,
   },
