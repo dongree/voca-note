@@ -244,6 +244,22 @@ const Management = () => {
     setQuizMode(!quizMode);
   };
 
+  const shuffle = array => {
+    let currentIndex = array.length,
+      randomIndex;
+    while (currentIndex != 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+
+    return array;
+  };
+
   const selectQuizFolder = folderKey => {
     if (quizMode) {
       const newQuizCards = [];
@@ -255,10 +271,11 @@ const Management = () => {
           newQuizCards.push(datas[key]);
         }
       });
-      setQuizCards(newQuizCards);
+      setQuizCards(shuffle(newQuizCards));
       setQuizStart(true);
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
