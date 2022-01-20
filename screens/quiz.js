@@ -28,18 +28,26 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
       {hide ? (
         <View style={styles.info}>
           <Text style={styles.unhidden}>{word}</Text>
-          <Text style={styles.hidden}>
-            {visible ? meaning : '            '}
-          </Text>
+          {visible ? (
+            <Text style={styles.unhidden}>{meaning}</Text>
+          ) : (
+            <Text style={styles.hidden}></Text>
+          )}
         </View>
       ) : (
         <View style={styles.info}>
-          <Text style={styles.hidden}>{visible ? word : '            '}</Text>
+          {visible ? (
+            <Text style={styles.unhidden}>{word}</Text>
+          ) : (
+            <Text style={styles.hidden}></Text>
+          )}
           <Text style={styles.unhidden}>{meaning}</Text>
         </View>
       )}
       <TouchableOpacity style={styles.btn} onPress={handleIndex}>
-        <Text style={styles.btnText}>{visible ? 'next word' : '확인하기'}</Text>
+        <Text style={styles.btnText}>
+          {visible ? (index === cards.length - 1 ? 'End' : 'Next') : 'Check'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -60,6 +68,7 @@ const styles = StyleSheet.create({
   },
   number: {
     fontSize: 30,
+    fontWeight: 'bold',
   },
   info: {
     alignItems: 'center',
@@ -68,8 +77,9 @@ const styles = StyleSheet.create({
     fontSize: 60,
   },
   hidden: {
-    fontSize: 50,
+    fontSize: 60,
     backgroundColor: 'white',
+    alignSelf: 'stretch',
   },
   btn: {
     backgroundColor: 'orange',

@@ -270,10 +270,10 @@ const Management = () => {
     if (quizMode) {
       Alert.alert(
         'Choice',
-        'What do you want to hide between words and meanings?',
+        'What do you want to hide between meanings and words?',
         [
           {
-            text: 'Word',
+            text: 'Meaning',
             onPress: () => {
               setWhatToHide(true);
               const newQuizCards = [];
@@ -291,7 +291,7 @@ const Management = () => {
           },
 
           {
-            text: 'Meaning',
+            text: 'Word',
             onPress: () => {
               setWhatToHide(false);
               const newQuizCards = [];
