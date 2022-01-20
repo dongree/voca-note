@@ -155,6 +155,8 @@ const Management = () => {
 
   const [quizCards, setQuizCards] = useState([]);
 
+  const [whatToHide, setWhatToHide] = useState(true);
+
   const showCard = (card, key) => {
     setCardModalData({ ...card });
     setCardModalVisible(true);
@@ -181,17 +183,19 @@ const Management = () => {
   };
 
   const deleteCard = key => {
-    Alert.alert('Delete Card', 'Are you sure?', [
-      { text: 'Cancel' },
-      {
-        text: "I'm Sure",
-        onPress: () => {
-          const newData = { ...datas };
-          delete newData[key];
-          setDatas(newData);
+    if (!quizMode) {
+      Alert.alert('Delete Card', 'Are you sure?', [
+        { text: 'Cancel' },
+        {
+          text: "I'm Sure",
+          onPress: () => {
+            const newData = { ...datas };
+            delete newData[key];
+            setDatas(newData);
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
 
   const deleteIn = (newData, folderKey) => {
@@ -208,21 +212,23 @@ const Management = () => {
   };
 
   const deleteFolder = folderKey => {
-    Alert.alert(
-      'Delete Folder',
-      'If you delete this folder, all data in the folder will be deleted. Are you sure?',
-      [
-        { text: 'Cancel' },
-        {
-          text: "I'm Sure",
-          onPress: () => {
-            const newData = deleteIn({ ...datas }, folderKey);
-            delete newData[folderKey];
-            setDatas(newData);
+    if (!quizMode) {
+      Alert.alert(
+        'Delete Folder',
+        'If you delete this folder, all data in the folder will be deleted. Are you sure?',
+        [
+          { text: 'Cancel' },
+          {
+            text: "I'm Sure",
+            onPress: () => {
+              const newData = deleteIn({ ...datas }, folderKey);
+              delete newData[folderKey];
+              setDatas(newData);
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleEdit = editData => {
@@ -262,17 +268,47 @@ const Management = () => {
 
   const selectQuizFolder = folderKey => {
     if (quizMode) {
-      const newQuizCards = [];
-      Object.keys(datas).map(key => {
-        if (
-          datas[key].vKey === Number(folderKey) &&
-          datas[key].type === 'file'
-        ) {
-          newQuizCards.push(datas[key]);
-        }
-      });
-      setQuizCards(shuffle(newQuizCards));
-      setQuizStart(true);
+      Alert.alert(
+        'Choice',
+        'What do you want to hide between words and meanings?',
+        [
+          {
+            text: 'Word',
+            onPress: () => {
+              setWhatToHide(true);
+              const newQuizCards = [];
+              Object.keys(datas).map(key => {
+                if (
+                  datas[key].vKey === Number(folderKey) &&
+                  datas[key].type === 'file'
+                ) {
+                  newQuizCards.push(datas[key]);
+                }
+              });
+              setQuizCards(shuffle(newQuizCards));
+              setQuizStart(true);
+            },
+          },
+
+          {
+            text: 'Meaning',
+            onPress: () => {
+              setWhatToHide(false);
+              const newQuizCards = [];
+              Object.keys(datas).map(key => {
+                if (
+                  datas[key].vKey === Number(folderKey) &&
+                  datas[key].type === 'file'
+                ) {
+                  newQuizCards.push(datas[key]);
+                }
+              });
+              setQuizCards(shuffle(newQuizCards));
+              setQuizStart(true);
+            },
+          },
+        ]
+      );
     }
   };
 
@@ -345,6 +381,7 @@ const Management = () => {
             setQuizStart(end);
             setQuizMode(end);
           }}
+          hide={whatToHide}
         />
       )}
       {!quizMode ? (

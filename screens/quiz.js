@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-const Quiz = ({ cards, finishQuiz }) => {
+const Quiz = ({ cards, finishQuiz, hide }) => {
   const [index, setIndex] = useState(0);
   const [word, setWord] = useState();
   const [meaning, setMeaning] = useState();
-  const [meaningVisible, setMeaningVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     setWord(cards[index].word);
@@ -13,28 +13,33 @@ const Quiz = ({ cards, finishQuiz }) => {
   }, [index]);
 
   const handleIndex = () => {
-    if (meaningVisible && index < cards.length - 1) {
+    if (visible && index < cards.length - 1) {
       setIndex(index + 1);
-    } else if (meaningVisible && index === cards.length - 1) {
+    } else if (visible && index === cards.length - 1) {
       finishQuiz(false);
     }
-    setMeaningVisible(!meaningVisible);
+    setVisible(!visible);
   };
   return (
     <View style={styles.card}>
       <Text style={styles.number}>
         {index + 1}/{cards.length}
       </Text>
-      <View style={styles.info}>
-        <Text style={styles.cardWord}>{word}</Text>
-        <Text style={styles.cardMeaning}>
-          {meaningVisible ? meaning : '            '}
-        </Text>
-      </View>
+      {hide ? (
+        <View style={styles.info}>
+          <Text style={styles.unhidden}>{word}</Text>
+          <Text style={styles.hidden}>
+            {visible ? meaning : '            '}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.info}>
+          <Text style={styles.hidden}>{visible ? word : '            '}</Text>
+          <Text style={styles.unhidden}>{meaning}</Text>
+        </View>
+      )}
       <TouchableOpacity style={styles.btn} onPress={handleIndex}>
-        <Text style={styles.btnText}>
-          {meaningVisible ? 'next word' : '확인하기'}
-        </Text>
+        <Text style={styles.btnText}>{visible ? 'next word' : '확인하기'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -53,18 +58,16 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 20,
   },
-
   number: {
     fontSize: 30,
   },
   info: {
     alignItems: 'center',
   },
-  cardWord: {
+  unhidden: {
     fontSize: 60,
-    marginBottom: 40,
   },
-  cardMeaning: {
+  hidden: {
     fontSize: 50,
     backgroundColor: 'white',
   },
