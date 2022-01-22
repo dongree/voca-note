@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,136 +8,16 @@ import {
   Alert,
   Pressable,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons';
 import CardModal from './modal/cardModal';
 import AddModal from './modal/addModal';
 import Quiz from './quiz';
 
+const STORAGE_KEY = '@Data';
+
 const Management = () => {
-  const [datas, setDatas] = useState({
-    1: {
-      type: 'file',
-      word: 'apple',
-      meaning: '사과',
-      example: 'I have an apple',
-      vKey: 0,
-    },
-    2: {
-      type: 'file',
-      word: 'banana',
-      meaning: '바나나',
-      example: 'I like to eat banana',
-      vKey: 0,
-    },
-    3: {
-      type: 'folder',
-      name: 'animal',
-      vKey: 0,
-    },
-    4: {
-      type: 'file',
-      word: 'lion',
-      meaning: '사자',
-      example: 'I have an lion',
-      vKey: 3,
-    },
-    5: {
-      type: 'file',
-      word: 'tiger',
-      meaning: '호랑이',
-      example: 'I like tigers',
-      vKey: 3,
-    },
-    12: {
-      type: 'file',
-      word: 'elephant',
-      meaning: '코끼리',
-      example: 'A big elephant',
-      vKey: 3,
-    },
-    13: {
-      type: 'file',
-      word: 'dog',
-      meaning: '개',
-      example: 'My dog is so cute',
-      vKey: 3,
-    },
-    14: {
-      type: 'file',
-      word: 'cat',
-      meaning: '고양이',
-      example: 'I like cats more than dogs',
-      vKey: 3,
-    },
-    15: {
-      type: 'file',
-      word: 'cow',
-      meaning: '소',
-      example: 'Two cows',
-      vKey: 3,
-    },
-    16: {
-      type: 'file',
-      word: 'sheep',
-      meaning: '양',
-      example: 'a flock of sheep',
-      vKey: 3,
-    },
-    17: {
-      type: 'file',
-      word: 'horse',
-      meaning: '말',
-      example: 'I rode a horse yesterday',
-      vKey: 3,
-    },
-    18: {
-      type: 'file',
-      word: 'donkey',
-      meaning: '당나귀',
-      example: 'I rode a donkey yesterday',
-      vKey: 3,
-    },
-    19: {
-      type: 'file',
-      word: 'cheetah',
-      meaning: '치타',
-      example: 'Cheetahs are fast',
-      vKey: 3,
-    },
-    20: {
-      type: 'file',
-      word: 'crocodile',
-      meaning: '악어',
-      example: "I'm scared of crocodiles",
-      vKey: 3,
-    },
-    21: {
-      type: 'file',
-      word: 'camel',
-      meaning: '낙타',
-      example: 'two camels',
-      vKey: 3,
-    },
-    6: {
-      type: 'folder',
-      name: 'birds',
-      vKey: 3,
-    },
-    7: {
-      type: 'file',
-      word: 'eagle',
-      meaning: '독수리',
-      example: 'I like to eat banana',
-      vKey: 6,
-    },
-    8: {
-      type: 'file',
-      word: 'sparrow',
-      meaning: '참새',
-      example: 'I like to eat banana',
-      vKey: 6,
-    },
-  });
+  const [datas, setDatas] = useState({});
 
   const [backCount, setBackCount] = useState(0);
   const [preKeys, setPrekeys] = useState([0]);
@@ -157,6 +37,10 @@ const Management = () => {
 
   const [whatToHide, setWhatToHide] = useState(true);
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const showCard = (card, key) => {
     setCardModalData({ ...card });
     setCardModalVisible(true);
@@ -171,7 +55,26 @@ const Management = () => {
     setAddModalVisible(visible);
   };
 
-  const handleCreate = (type, word, meaning, example, name) => {
+  const saveData = async data => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadData = async () => {
+    try {
+      const s = await AsyncStorage.getItem(STORAGE_KEY);
+      if (s) {
+        setDatas(JSON.parse(s));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCreate = async (type, word, meaning, example, name) => {
     const newData = {
       ...datas,
       [Date.now()]:
@@ -180,6 +83,7 @@ const Management = () => {
           : { type, name, datas: {}, vKey: preKeys[preKeys.length - 1] },
     };
     setDatas(newData);
+    await saveData(newData);
   };
 
   const deleteCard = key => {
@@ -192,6 +96,7 @@ const Management = () => {
             const newData = { ...datas };
             delete newData[key];
             setDatas(newData);
+            saveData(newData);
           },
         },
       ]);
