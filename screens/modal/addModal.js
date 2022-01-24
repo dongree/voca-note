@@ -8,6 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { theme } from '../../color';
 
 const AddModal = ({ visible, changeVisible, createData }) => {
   const [selectedType, setSelectedType] = useState('file');
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   },
   addModalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: theme.addModalBg,
     borderRadius: 20,
     padding: 20,
     width: 300,
@@ -157,11 +158,11 @@ const styles = StyleSheet.create({
     marginRight: 3,
     padding: 10,
     elevation: 2,
-    backgroundColor: '#2196F3',
+    backgroundColor: theme.addModalBtn,
   },
 
   addModalBtnText: {
-    color: 'white',
+    color: theme.addModalBtnText,
     fontWeight: 'bold',
     textAlign: 'center',
   },

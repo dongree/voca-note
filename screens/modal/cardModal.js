@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { theme } from '../../color';
 
 const CardModal = ({ data, visible, changeVisible, editData }) => {
   const [editMode, setEditMode] = useState(false);
@@ -55,17 +56,17 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
           {editMode ? (
             <View>
               <TextInput
-                style={styles.inputWord}
+                style={{ ...styles.input, fontSize: 40 }}
                 onChangeText={handleWord}
                 value={word}
               ></TextInput>
               <TextInput
-                style={styles.inputMeaning}
+                style={{ ...styles.input, fontSize: 20 }}
                 onChangeText={handleMeaning}
                 value={meaning}
               ></TextInput>
               <TextInput
-                style={styles.inputExample}
+                style={{ ...styles.input, fontSize: 18 }}
                 onChangeText={handleExample}
                 value={example}
               ></TextInput>
@@ -105,7 +106,7 @@ export default CardModal;
 const styles = StyleSheet.create({
   cardModalView: {
     margin: 20,
-    backgroundColor: 'tomato',
+    backgroundColor: theme.cardModalBg,
     borderRadius: 5,
     padding: 20,
     width: 350,
@@ -143,22 +144,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 
-  inputWord: {
-    fontSize: 40,
-    backgroundColor: 'white',
+  input: {
+    backgroundColor: theme.inputBg,
     marginBottom: 4,
-  },
-
-  inputMeaning: {
-    fontSize: 20,
-    backgroundColor: 'white',
-    marginBottom: 4,
-  },
-
-  inputExample: {
-    fontSize: 18,
-    backgroundColor: 'white',
-    marginBottom: 4,
+    borderRadius: 20,
+    paddingLeft: 10,
   },
 
   cardModalBtns: {
@@ -171,11 +161,11 @@ const styles = StyleSheet.create({
     marginRight: 3,
     padding: 10,
     elevation: 2,
-    backgroundColor: 'orange',
+    backgroundColor: theme.cardModalBtn,
   },
 
   cardModalBtnText: {
-    color: 'white',
+    color: theme.cardModalBtnText,
     fontWeight: 'bold',
     textAlign: 'center',
   },

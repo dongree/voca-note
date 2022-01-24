@@ -1,10 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import Management from './screens/main';
+import Main from './screens/main';
 
 export default function App() {
   return (
-    <Management />
+    <Main />
     // <StatusBar style="auto" />
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { theme } from '../color';
 
 const Quiz = ({ cards, finishQuiz, hide }) => {
   const [index, setIndex] = useState(0);
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'tomato',
+    backgroundColor: theme.card,
     borderRadius: 10,
     width: '100%',
     height: '100%',
@@ -78,16 +79,17 @@ const styles = StyleSheet.create({
   },
   hidden: {
     fontSize: 60,
-    backgroundColor: 'white',
+    backgroundColor: theme.hidden,
     alignSelf: 'stretch',
   },
   btn: {
-    backgroundColor: 'orange',
+    backgroundColor: theme.btn,
     padding: 10,
     borderRadius: 20,
     alignItems: 'center',
   },
   btnText: {
     fontSize: 20,
+    color: theme.btnText,
   },
 });

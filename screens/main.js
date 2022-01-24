@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons';
+import { theme } from '../color';
 import CardModal from './modal/cardModal';
 import AddModal from './modal/addModal';
 import Quiz from './quiz';
 
 const STORAGE_KEY = '@Data';
 
-const Management = () => {
+const Main = () => {
   const [datas, setDatas] = useState({});
 
   const [backCount, setBackCount] = useState(0);
@@ -190,8 +191,16 @@ const Management = () => {
                   newQuizCards.push(datas[key]);
                 }
               });
-              setQuizCards(shuffle(newQuizCards));
-              setQuizStart(true);
+              if (newQuizCards.length !== 0) {
+                setQuizCards(shuffle(newQuizCards));
+                setQuizStart(true);
+              } else {
+                Alert.alert(
+                  'Try again',
+                  "There's no file in the folder you chose.",
+                  [{ text: 'OK' }]
+                );
+              }
             },
           },
 
@@ -208,8 +217,16 @@ const Management = () => {
                   newQuizCards.push(datas[key]);
                 }
               });
-              setQuizCards(shuffle(newQuizCards));
-              setQuizStart(true);
+              if (newQuizCards.length !== 0) {
+                setQuizCards(shuffle(newQuizCards));
+                setQuizStart(true);
+              } else {
+                Alert.alert(
+                  'Try again',
+                  "The folder you choosen doesn't have files",
+                  [{ text: 'OK' }]
+                );
+              }
             },
           },
         ]
@@ -218,7 +235,12 @@ const Management = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: quizMode ? theme.QuizBg : theme.ManagementBg,
+      }}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>
           {quizMode ? 'Random Quiz' : 'Card management'}
@@ -238,7 +260,7 @@ const Management = () => {
                 <Pressable
                   style={{
                     ...styles.card,
-                    backgroundColor: quizMode ? '#993b29' : 'tomato',
+                    backgroundColor: quizMode ? theme.disabledFile : theme.file,
                   }}
                   key={key}
                   onPress={() => showCard(datas[key], key)}
@@ -289,6 +311,7 @@ const Management = () => {
           hide={whatToHide}
         />
       )}
+
       {!quizMode ? (
         <TouchableOpacity
           style={styles.addBtn}
@@ -298,7 +321,7 @@ const Management = () => {
         </TouchableOpacity>
       ) : null}
 
-      {backCount !== 0 ? (
+      {!quizStart && backCount !== 0 ? (
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => {
@@ -328,13 +351,12 @@ const Management = () => {
   );
 };
 
-export default Management;
+export default Main;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ff8e47',
   },
 
   header: {
@@ -348,10 +370,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
+    color: theme.titleText,
   },
 
   qizeBtn: {
-    backgroundColor: '#f5b342',
+    backgroundColor: theme.btn,
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -359,10 +382,12 @@ const styles = StyleSheet.create({
 
   qizeBtnText: {
     fontSize: 15,
+    color: theme.btnText,
+    fontWeight: 'bold',
   },
 
   cards: {
-    backgroundColor: 'white',
+    backgroundColor: '#ededed',
     borderRadius: 10,
   },
 
@@ -377,6 +402,7 @@ const styles = StyleSheet.create({
 
   cardText: {
     fontSize: 20,
+    color: theme.fileText,
   },
 
   cardBtns: {
@@ -389,7 +415,7 @@ const styles = StyleSheet.create({
 
   addBtn: {
     position: 'absolute',
-    backgroundColor: 'black',
+    backgroundColor: theme.absoluteBtn,
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -401,7 +427,7 @@ const styles = StyleSheet.create({
 
   backBtn: {
     position: 'absolute',
-    backgroundColor: 'black',
+    backgroundColor: theme.absoluteBtn,
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -412,7 +438,7 @@ const styles = StyleSheet.create({
   },
 
   folder: {
-    backgroundColor: 'orange',
+    backgroundColor: theme.folder,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -430,6 +456,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingLeft: 10,
     borderLeftWidth: 3,
-    borderLeftColor: '#bd6128',
+    borderLeftColor: theme.brown,
+    color: theme.folderText,
   },
 });
