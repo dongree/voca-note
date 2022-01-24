@@ -16,7 +16,6 @@ import AddModal from './modal/addModal';
 import Quiz from './quiz';
 
 const STORAGE_KEY = '@Data';
-
 const Main = () => {
   const [datas, setDatas] = useState({});
 
@@ -75,12 +74,12 @@ const Main = () => {
     }
   };
 
-  const handleCreate = async (type, word, meaning, example, name) => {
+  const handleCreate = async (type, word, meaning, name) => {
     const newData = {
       ...datas,
       [Date.now()]:
         type === 'file'
-          ? { type, word, meaning, example, vKey: preKeys[preKeys.length - 1] }
+          ? { type, word, meaning, vKey: preKeys[preKeys.length - 1] }
           : { type, name, datas: {}, vKey: preKeys[preKeys.length - 1] },
     };
     setDatas(newData);
@@ -130,6 +129,7 @@ const Main = () => {
               const newData = deleteIn({ ...datas }, folderKey);
               delete newData[folderKey];
               setDatas(newData);
+              saveData(newData);
             },
           },
         ]

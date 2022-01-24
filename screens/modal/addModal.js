@@ -14,14 +14,12 @@ const AddModal = ({ visible, changeVisible, createData }) => {
   const [selectedType, setSelectedType] = useState('file');
   const [word, setWord] = useState('');
   const [meaning, setMeaning] = useState('');
-  const [example, setExample] = useState('');
 
   const [folderName, setFolderName] = useState('');
 
   const cleanTextInput = () => {
     setWord('');
     setMeaning('');
-    setExample('');
     setFolderName('');
   };
 
@@ -36,14 +34,13 @@ const AddModal = ({ visible, changeVisible, createData }) => {
   };
 
   const handleCreate = () => {
-    createData(selectedType, word, meaning, example, folderName);
+    createData(selectedType, word, meaning, folderName);
     handleVisible(!visible);
     cleanTextInput();
   };
 
   const handleWord = e => setWord(e);
   const handleMeaning = e => setMeaning(e);
-  const handleExample = e => setExample(e);
   const handleFolderName = e => setFolderName(e);
 
   return (
@@ -81,12 +78,6 @@ const AddModal = ({ visible, changeVisible, createData }) => {
                 onChangeText={handleMeaning}
                 value={meaning}
                 placeholder="meaning"
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                onChangeText={handleExample}
-                value={example}
-                placeholder="example"
               ></TextInput>
             </View>
           ) : (

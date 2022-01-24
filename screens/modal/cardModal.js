@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import {
   StyleSheet,
   Text,
@@ -14,12 +13,10 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
   const [editMode, setEditMode] = useState(false);
   const [word, setWord] = useState();
   const [meaning, setMeaning] = useState();
-  const [example, setExample] = useState();
 
   useEffect(() => {
     setWord(data.word);
     setMeaning(data.meaning);
-    setExample(data.example);
   }, [data]);
 
   const handleVisible = v => {
@@ -31,7 +28,7 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
 
   const handleEdit = () => {
     if (editMode) {
-      const newData = { type: 'file', word, meaning, example, vKey: data.vKey };
+      const newData = { type: 'file', word, meaning, vKey: data.vKey };
       editData(newData);
     }
     setEditMode(!editMode);
@@ -39,7 +36,6 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
 
   const handleWord = e => setWord(e);
   const handleMeaning = e => setMeaning(e);
-  const handleExample = e => setExample(e);
 
   return (
     <Modal
@@ -61,24 +57,19 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
                 value={word}
               ></TextInput>
               <TextInput
-                style={{ ...styles.input, fontSize: 20 }}
+                style={{ ...styles.input, fontSize: 40 }}
                 onChangeText={handleMeaning}
                 value={meaning}
-              ></TextInput>
-              <TextInput
-                style={{ ...styles.input, fontSize: 18 }}
-                onChangeText={handleExample}
-                value={example}
               ></TextInput>
             </View>
           ) : (
             <View>
-              <Text style={styles.cardWord}>{word}</Text>
-              <Text style={styles.cardMeaning}>{meaning}</Text>
-              <Text style={styles.cardExample}>ex | {example}</Text>
+              <Text style={{ ...styles.cardText, fontSize: 40 }}>{word}</Text>
+              <Text style={{ ...styles.cardText, fontSize: 40 }}>
+                {meaning}
+              </Text>
             </View>
           )}
-
           <View style={styles.cardModalBtns}>
             <TouchableOpacity
               style={styles.cardModalBtn}
@@ -126,22 +117,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  cardWord: {
-    fontSize: 40,
+  cardText: {
     fontWeight: 'bold',
     marginBottom: 4,
-  },
-
-  cardMeaning: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-
-  cardExample: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    paddingLeft: 10,
   },
 
   input: {
