@@ -52,22 +52,20 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
           {editMode ? (
             <View>
               <TextInput
-                style={{ ...styles.input, fontSize: 40 }}
+                style={styles.input}
                 onChangeText={handleWord}
                 value={word}
               ></TextInput>
               <TextInput
-                style={{ ...styles.input, fontSize: 40 }}
+                style={styles.input}
                 onChangeText={handleMeaning}
                 value={meaning}
               ></TextInput>
             </View>
           ) : (
             <View>
-              <Text style={{ ...styles.cardText, fontSize: 40 }}>{word}</Text>
-              <Text style={{ ...styles.cardText, fontSize: 40 }}>
-                {meaning}
-              </Text>
+              <Text style={styles.cardText}>{word}</Text>
+              <Text style={styles.cardText}>{meaning}</Text>
             </View>
           )}
           <View style={styles.cardModalBtns}>
@@ -121,6 +119,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 4,
     paddingLeft: 10,
+    fontSize: 40,
   },
 
   input: {
@@ -128,6 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     borderRadius: 20,
     paddingLeft: 10,
+    fontSize: 40,
   },
 
   cardModalBtns: {

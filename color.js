@@ -1,6 +1,6 @@
 export const theme = {
   ManagementBg: '#ff8e47',
-  QuizBg: '#c4a1f0',
+  QuizBg: '#ffc847',
   titleText: 'black',
   file: 'tomato',
   fileText: 'black',
@@ -14,13 +14,25 @@ export const theme = {
   absoluteBtn: 'black',
 
   addModalBg: 'white',
-  addModalBtn: '#2196F3',
+  addModalBtn: 'black',
   addModalBtnText: 'white',
 
   cardModalBg: '#ffad6e',
   cardModalBtn: 'orange',
   cardModalBtnText: 'white',
   inputBg: 'white',
+
+  quizModeModalBg: 'white',
+  quizModeModalBtn: 'black',
+  quizModeModalBtnText: 'white',
+
+  choiceModallBg: 'white',
+  choiceModalBtn: 'black',
+  choiceModalBtnText: 'white',
+
+  tryAgainModalBg: 'white',
+  tryAgainModalBtn: 'black',
+  tryAgainModalBtnText: 'white',
 
   brown: '#bd6128',
 };

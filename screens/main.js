@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   Pressable,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons';
@@ -14,6 +15,9 @@ import { theme } from '../color';
 import CardModal from './modal/cardModal';
 import AddModal from './modal/addModal';
 import Quiz from './quiz';
+import QuizModeModal from './modal/quizModeModal';
+import ChoiceModal from './modal/chocieModal';
+import TryAgainModal from './modal/tryAgainModal';
 
 const STORAGE_KEY = '@Data';
 const Main = () => {
@@ -22,13 +26,14 @@ const Main = () => {
   const [backCount, setBackCount] = useState(0);
   const [preKeys, setPrekeys] = useState([0]);
 
-  // add modal
+  // modals
   const [addModalVisible, setAddModalVisible] = useState(false);
-
-  // card modal
   const [cardModalVisible, setCardModalVisible] = useState(false);
   const [cardModalData, setCardModalData] = useState({});
   const [cardModalKey, setCardModalKey] = useState();
+  const [quizModeModalVisible, setQuizModeModalVisible] = useState(false);
+  const [choiceModalVisible, setChoiceModalVisible] = useState(false);
+  const [tryAgainModalVisible, setTryAgainModalVisible] = useState(false);
 
   const [quizMode, setQuizMode] = useState(false);
   const [quizStart, setQuizStart] = useState(false);
@@ -36,6 +41,8 @@ const Main = () => {
   const [quizCards, setQuizCards] = useState([]);
 
   const [whatToHide, setWhatToHide] = useState(true);
+
+  const [selectedFolderKey, setSelectedFolderKey] = useState();
 
   useEffect(() => {
     loadData();
@@ -53,6 +60,18 @@ const Main = () => {
 
   const handleAddModalVisible = visible => {
     setAddModalVisible(visible);
+  };
+
+  const handleQuizModeModalVisible = visible => {
+    setQuizModeModalVisible(visible);
+  };
+
+  const handleChoiceModalVisible = visible => {
+    setChoiceModalVisible(visible);
+  };
+
+  const handleTryAgainModalVisible = visible => {
+    setTryAgainModalVisible(visible);
   };
 
   const saveData = async data => {
@@ -88,18 +107,28 @@ const Main = () => {
 
   const deleteCard = key => {
     if (!quizMode) {
-      Alert.alert('Delete Card', 'Are you sure?', [
-        { text: 'Cancel' },
-        {
-          text: "I'm Sure",
-          onPress: () => {
-            const newData = { ...datas };
-            delete newData[key];
-            setDatas(newData);
-            saveData(newData);
+      if (Platform.OS === 'web') {
+        const ok = confirm('Do you want to delete this card?');
+        if (ok) {
+          const newData = { ...datas };
+          delete newData[key];
+          setDatas(newData);
+          saveData(newData);
+        }
+      } else {
+        Alert.alert('Delete Card', 'Are you sure?', [
+          { text: 'Cancel' },
+          {
+            text: "I'm Sure",
+            onPress: () => {
+              const newData = { ...datas };
+              delete newData[key];
+              setDatas(newData);
+              saveData(newData);
+            },
           },
-        },
-      ]);
+        ]);
+      }
     }
   };
 
@@ -118,22 +147,32 @@ const Main = () => {
 
   const deleteFolder = folderKey => {
     if (!quizMode) {
-      Alert.alert(
-        'Delete Folder',
-        'If you delete this folder, all data in the folder will be deleted. Are you sure?',
-        [
-          { text: 'Cancel' },
-          {
-            text: "I'm Sure",
-            onPress: () => {
-              const newData = deleteIn({ ...datas }, folderKey);
-              delete newData[folderKey];
-              setDatas(newData);
-              saveData(newData);
+      if (Platform.OS === 'web') {
+        const ok = confirm('Do you want to delete this folder?');
+        if (ok) {
+          const newData = { ...datas };
+          delete newData[key];
+          setDatas(newData);
+          saveData(newData);
+        }
+      } else {
+        Alert.alert(
+          'Delete Folder',
+          'If you delete this folder, all data in the folder will be deleted. Are you sure?',
+          [
+            { text: 'Cancel' },
+            {
+              text: "I'm Sure",
+              onPress: () => {
+                const newData = deleteIn({ ...datas }, folderKey);
+                delete newData[folderKey];
+                setDatas(newData);
+                saveData(newData);
+              },
             },
-          },
-        ]
-      );
+          ]
+        );
+      }
     }
   };
 
@@ -144,11 +183,7 @@ const Main = () => {
 
   const handleQuizMode = () => {
     if (!quizMode) {
-      Alert.alert(
-        'Qize Mode',
-        'Long press a folder you want to quiz and then start the quiz.',
-        [{ text: 'OK' }]
-      );
+      setQuizModeModalVisible(true);
     }
     if (quizStart) {
       setQuizStart(!quizStart);
@@ -172,72 +207,37 @@ const Main = () => {
     return array;
   };
 
+  const handleWhatHide = s => {
+    setWhatToHide(s);
+    const newQuizCards = [];
+    Object.keys(datas).map(key => {
+      if (
+        datas[key].vKey === Number(selectedFolderKey) &&
+        datas[key].type === 'file'
+      ) {
+        newQuizCards.push(datas[key]);
+      }
+    });
+    if (newQuizCards.length !== 0) {
+      setQuizCards(shuffle(newQuizCards));
+      setQuizStart(true);
+    } else {
+      setTryAgainModalVisible(true);
+    }
+  };
+
   const selectQuizFolder = folderKey => {
     if (quizMode) {
-      Alert.alert(
-        'Choice',
-        'What do you want to hide between meanings and words?',
-        [
-          {
-            text: 'Meaning',
-            onPress: () => {
-              setWhatToHide(true);
-              const newQuizCards = [];
-              Object.keys(datas).map(key => {
-                if (
-                  datas[key].vKey === Number(folderKey) &&
-                  datas[key].type === 'file'
-                ) {
-                  newQuizCards.push(datas[key]);
-                }
-              });
-              if (newQuizCards.length !== 0) {
-                setQuizCards(shuffle(newQuizCards));
-                setQuizStart(true);
-              } else {
-                Alert.alert(
-                  'Try again',
-                  "There's no file in the folder you chose.",
-                  [{ text: 'OK' }]
-                );
-              }
-            },
-          },
-
-          {
-            text: 'Word',
-            onPress: () => {
-              setWhatToHide(false);
-              const newQuizCards = [];
-              Object.keys(datas).map(key => {
-                if (
-                  datas[key].vKey === Number(folderKey) &&
-                  datas[key].type === 'file'
-                ) {
-                  newQuizCards.push(datas[key]);
-                }
-              });
-              if (newQuizCards.length !== 0) {
-                setQuizCards(shuffle(newQuizCards));
-                setQuizStart(true);
-              } else {
-                Alert.alert(
-                  'Try again',
-                  "The folder you choosen doesn't have files",
-                  [{ text: 'OK' }]
-                );
-              }
-            },
-          },
-        ]
-      );
+      setSelectedFolderKey(folderKey);
+      setChoiceModalVisible(true);
     }
   };
 
   return (
     <View
       style={{
-        ...styles.container,
+        flex: 1,
+        padding: 20,
         backgroundColor: quizMode ? theme.QuizBg : theme.ManagementBg,
       }}
     >
@@ -259,7 +259,12 @@ const Main = () => {
               datas[key].type === 'file' ? (
                 <Pressable
                   style={{
-                    ...styles.card,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    margin: 4,
+                    padding: 7,
+                    borderRadius: 5,
                     backgroundColor: quizMode ? theme.disabledFile : theme.file,
                   }}
                   key={key}
@@ -267,14 +272,13 @@ const Main = () => {
                   disabled={quizMode ? true : false}
                 >
                   <Text style={styles.cardText}>{datas[key].word}</Text>
-                  <View style={styles.cardBtns}>
-                    <TouchableOpacity
-                      style={styles.cardBtn}
-                      onPress={() => deleteCard(key)}
-                    >
-                      <FontAwesome name="remove" size={24} color="black" />
-                    </TouchableOpacity>
-                  </View>
+
+                  <TouchableOpacity
+                    style={styles.cardBtn}
+                    onPress={() => deleteCard(key)}
+                  >
+                    <FontAwesome name="remove" size={24} color="black" />
+                  </TouchableOpacity>
                 </Pressable>
               ) : (
                 // folder
@@ -347,6 +351,22 @@ const Main = () => {
         changeVisible={handleAddModalVisible}
         createData={handleCreate}
       />
+
+      <QuizModeModal
+        visible={quizModeModalVisible}
+        changeVisible={handleQuizModeModalVisible}
+      />
+
+      <ChoiceModal
+        visible={choiceModalVisible}
+        changeVisible={handleChoiceModalVisible}
+        whatHide={handleWhatHide}
+      />
+
+      <TryAgainModal
+        visible={tryAgainModalVisible}
+        changeVisible={handleTryAgainModalVisible}
+      />
     </View>
   );
 };
@@ -368,7 +388,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: 'bold',
     color: theme.titleText,
   },
@@ -389,15 +409,6 @@ const styles = StyleSheet.create({
   cards: {
     backgroundColor: '#ededed',
     borderRadius: 10,
-  },
-
-  card: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: 4,
-    padding: 7,
-    borderRadius: 5,
   },
 
   cardText: {

@@ -55,7 +55,9 @@ const AddModal = ({ visible, changeVisible, createData }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.addModalView}>
-          <Text style={styles.addModalTitle}>Create card or folder</Text>
+          <Text style={styles.addModalTitle}>
+            Create a {selectedType === 'file' ? 'Card' : 'Folder'}
+          </Text>
           <Picker
             selectedValue={selectedType}
             onValueChange={(itemValue, itemIndex) =>
@@ -138,6 +140,7 @@ const styles = StyleSheet.create({
   addModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 15,
   },
 
   addModalBtns: {

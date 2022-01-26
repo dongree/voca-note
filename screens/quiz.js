@@ -32,7 +32,7 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
           {visible ? (
             <Text style={styles.unhidden}>{meaning}</Text>
           ) : (
-            <Text style={styles.hidden}></Text>
+            <Text style={styles.hidden}>{'            '}</Text>
           )}
         </View>
       ) : (
@@ -40,7 +40,7 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
           {visible ? (
             <Text style={styles.unhidden}>{word}</Text>
           ) : (
-            <Text style={styles.hidden}></Text>
+            <Text style={styles.hidden}>{'            '}</Text>
           )}
           <Text style={styles.unhidden}>{meaning}</Text>
         </View>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   hidden: {
     fontSize: 60,
     backgroundColor: theme.hidden,
-    alignSelf: 'stretch',
+    borderRadius: 20,
   },
   btn: {
     backgroundColor: theme.btn,
