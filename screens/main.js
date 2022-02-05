@@ -6,20 +6,20 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Pressable,
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons';
 import { theme } from '../color';
-import CardModal from './modal/cardModal';
 import AddModal from './modal/addModal';
 import Quiz from './quiz';
 import QuizModeModal from './modal/quizModeModal';
-import ChoiceModal from './modal/chocieModal';
 import TryAgainModal from './modal/tryAgainModal';
+import Card from './card';
+import Folder from './folder';
 
 const STORAGE_KEY = '@Data';
+
 const Main = () => {
   const [datas, setDatas] = useState({});
 
@@ -28,11 +28,7 @@ const Main = () => {
 
   // modals
   const [addModalVisible, setAddModalVisible] = useState(false);
-  const [cardModalVisible, setCardModalVisible] = useState(false);
-  const [cardModalData, setCardModalData] = useState({});
-  const [cardModalKey, setCardModalKey] = useState();
   const [quizModeModalVisible, setQuizModeModalVisible] = useState(false);
-  const [choiceModalVisible, setChoiceModalVisible] = useState(false);
   const [tryAgainModalVisible, setTryAgainModalVisible] = useState(false);
 
   const [quizMode, setQuizMode] = useState(false);
@@ -42,32 +38,16 @@ const Main = () => {
 
   const [whatToHide, setWhatToHide] = useState(true);
 
-  const [selectedFolderKey, setSelectedFolderKey] = useState();
-
   useEffect(() => {
     loadData();
   }, []);
-
-  const showCard = (card, key) => {
-    setCardModalData({ ...card });
-    setCardModalVisible(true);
-    setCardModalKey(key);
-  };
-
-  const handleCardModalVisible = visible => {
-    setCardModalVisible(visible);
-  };
-
+  console.log(datas);
   const handleAddModalVisible = visible => {
     setAddModalVisible(visible);
   };
 
   const handleQuizModeModalVisible = visible => {
     setQuizModeModalVisible(visible);
-  };
-
-  const handleChoiceModalVisible = visible => {
-    setChoiceModalVisible(visible);
   };
 
   const handleTryAgainModalVisible = visible => {
@@ -176,9 +156,10 @@ const Main = () => {
     }
   };
 
-  const handleEdit = editData => {
-    const newData = { ...datas, [cardModalKey]: editData };
+  const handleEdit = (editData, key) => {
+    const newData = { ...datas, [key]: editData };
     setDatas(newData);
+    saveData(newData);
   };
 
   const handleQuizMode = () => {
@@ -207,14 +188,11 @@ const Main = () => {
     return array;
   };
 
-  const handleWhatHide = s => {
+  const handleWhatHide = (s, folderKey) => {
     setWhatToHide(s);
     const newQuizCards = [];
     Object.keys(datas).map(key => {
-      if (
-        datas[key].vKey === Number(selectedFolderKey) &&
-        datas[key].type === 'file'
-      ) {
+      if (datas[key].vKey === Number(folderKey) && datas[key].type === 'file') {
         newQuizCards.push(datas[key]);
       }
     });
@@ -226,11 +204,9 @@ const Main = () => {
     }
   };
 
-  const selectQuizFolder = folderKey => {
-    if (quizMode) {
-      setSelectedFolderKey(folderKey);
-      setChoiceModalVisible(true);
-    }
+  const handlePreKeys = newPreKeys => {
+    setPrekeys(newPreKeys);
+    setBackCount(backCount + 1);
   };
 
   return (
@@ -257,50 +233,25 @@ const Main = () => {
           {Object.keys(datas).map(key =>
             datas[key].vKey === preKeys[preKeys.length - 1] ? (
               datas[key].type === 'file' ? (
-                <Pressable
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    margin: 4,
-                    padding: 7,
-                    borderRadius: 5,
-                    backgroundColor: quizMode ? theme.disabledFile : theme.file,
-                  }}
+                <Card
                   key={key}
-                  onPress={() => showCard(datas[key], key)}
-                  disabled={quizMode ? true : false}
-                >
-                  <Text style={styles.cardText}>{datas[key].word}</Text>
-
-                  <TouchableOpacity
-                    style={styles.cardBtn}
-                    onPress={() => deleteCard(key)}
-                  >
-                    <FontAwesome name="remove" size={24} color="black" />
-                  </TouchableOpacity>
-                </Pressable>
+                  cardKey={key}
+                  cardData={datas[key]}
+                  quizMode={quizMode}
+                  deliverDelKey={deleteCard}
+                  editData={handleEdit}
+                />
               ) : (
-                // folder
-                <Pressable
-                  style={styles.folder}
+                <Folder
                   key={key}
-                  onPress={() => {
-                    const newPreKeys = preKeys;
-                    newPreKeys.push(Number(key));
-                    setPrekeys(newPreKeys);
-                    setBackCount(backCount + 1);
-                  }}
-                  onLongPress={() => selectQuizFolder(key)}
-                >
-                  <Text style={styles.folderText}>{datas[key].name}</Text>
-                  <TouchableOpacity
-                    style={styles.folderBtn}
-                    onPress={() => deleteFolder(key)}
-                  >
-                    <FontAwesome name="remove" size={24} color="black" />
-                  </TouchableOpacity>
-                </Pressable>
+                  folderKey={key}
+                  preKeys={preKeys}
+                  name={datas[key].name}
+                  savePrekeys={handlePreKeys}
+                  quizMode={quizMode}
+                  whatHide={handleWhatHide}
+                  deliverDelKey={deleteFolder}
+                />
               )
             ) : null
           )}
@@ -339,13 +290,6 @@ const Main = () => {
         </TouchableOpacity>
       ) : null}
 
-      <CardModal
-        data={cardModalData}
-        visible={cardModalVisible}
-        changeVisible={handleCardModalVisible}
-        editData={handleEdit}
-      />
-
       <AddModal
         visible={addModalVisible}
         changeVisible={handleAddModalVisible}
@@ -355,12 +299,6 @@ const Main = () => {
       <QuizModeModal
         visible={quizModeModalVisible}
         changeVisible={handleQuizModeModalVisible}
-      />
-
-      <ChoiceModal
-        visible={choiceModalVisible}
-        changeVisible={handleChoiceModalVisible}
-        whatHide={handleWhatHide}
       />
 
       <TryAgainModal
@@ -411,19 +349,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  cardText: {
-    fontSize: 20,
-    color: theme.fileText,
-  },
-
-  cardBtns: {
-    flexDirection: 'row',
-  },
-
-  cardBtn: {
-    marginRight: 5,
-  },
-
   addBtn: {
     position: 'absolute',
     backgroundColor: theme.absoluteBtn,
@@ -446,28 +371,5 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     left: 40,
     bottom: 40,
-  },
-
-  folder: {
-    backgroundColor: theme.folder,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: 4,
-    padding: 7,
-    borderRadius: 10,
-  },
-
-  folderBtn: {
-    marginRight: 5,
-  },
-
-  folderText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingLeft: 10,
-    borderLeftWidth: 3,
-    borderLeftColor: theme.brown,
-    color: theme.folderText,
   },
 });
