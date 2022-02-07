@@ -41,7 +41,7 @@ const Main = () => {
   useEffect(() => {
     loadData();
   }, []);
-  console.log(datas);
+
   const handleAddModalVisible = visible => {
     setAddModalVisible(visible);
   };
@@ -73,16 +73,24 @@ const Main = () => {
     }
   };
 
-  const handleCreate = async (type, word, meaning, name) => {
-    const newData = {
-      ...datas,
-      [Date.now()]:
-        type === 'file'
-          ? { type, word, meaning, vKey: preKeys[preKeys.length - 1] }
-          : { type, name, datas: {}, vKey: preKeys[preKeys.length - 1] },
-    };
-    setDatas(newData);
-    await saveData(newData);
+  const handleCreate = (type, word, meaning, name, difficulty) => {
+    setDatas(datas => {
+      const newData = {
+        ...datas,
+        [Date.now()]:
+          type === 'file'
+            ? {
+                type,
+                word,
+                meaning,
+                vKey: preKeys[preKeys.length - 1],
+                difficulty,
+              }
+            : { type, name, datas: {}, vKey: preKeys[preKeys.length - 1] },
+      };
+      saveData(newData);
+      return newData;
+    });
   };
 
   const deleteCard = key => {
@@ -90,10 +98,12 @@ const Main = () => {
       if (Platform.OS === 'web') {
         const ok = confirm('Do you want to delete this card?');
         if (ok) {
-          const newData = { ...datas };
-          delete newData[key];
-          setDatas(newData);
-          saveData(newData);
+          setDatas(datas => {
+            const newData = { ...datas };
+            delete newData[key];
+            saveData(newData);
+            return newData;
+          });
         }
       } else {
         Alert.alert('Delete Card', 'Are you sure?', [
@@ -101,10 +111,12 @@ const Main = () => {
           {
             text: "I'm Sure",
             onPress: () => {
-              const newData = { ...datas };
-              delete newData[key];
-              setDatas(newData);
-              saveData(newData);
+              setDatas(datas => {
+                const newData = { ...datas };
+                delete newData[key];
+                saveData(newData);
+                return newData;
+              });
             },
           },
         ]);
@@ -130,10 +142,12 @@ const Main = () => {
       if (Platform.OS === 'web') {
         const ok = confirm('Do you want to delete this folder?');
         if (ok) {
-          const newData = { ...datas };
-          delete newData[key];
-          setDatas(newData);
-          saveData(newData);
+          setDatas(datas => {
+            const newData = deleteIn({ ...datas }, folderKey);
+            delete newData[folderKey];
+            saveData(newData);
+            return newData;
+          });
         }
       } else {
         Alert.alert(
@@ -144,10 +158,12 @@ const Main = () => {
             {
               text: "I'm Sure",
               onPress: () => {
-                const newData = deleteIn({ ...datas }, folderKey);
-                delete newData[folderKey];
-                setDatas(newData);
-                saveData(newData);
+                setDatas(datas => {
+                  const newData = deleteIn({ ...datas }, folderKey);
+                  delete newData[folderKey];
+                  saveData(newData);
+                  return newData;
+                });
               },
             },
           ]
@@ -157,9 +173,12 @@ const Main = () => {
   };
 
   const handleEdit = (editData, key) => {
-    const newData = { ...datas, [key]: editData };
-    setDatas(newData);
-    saveData(newData);
+    setDatas(datas => {
+      const newData = { ...datas };
+      newData[key] = editData;
+      saveData(newData);
+      return newData;
+    });
   };
 
   const handleQuizMode = () => {
@@ -184,7 +203,6 @@ const Main = () => {
         array[currentIndex],
       ];
     }
-
     return array;
   };
 

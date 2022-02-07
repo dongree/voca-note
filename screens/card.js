@@ -35,7 +35,14 @@ const Card = ({ cardData, cardKey, quizMode, deliverDelKey, editData }) => {
           margin: 4,
           padding: 7,
           borderRadius: 5,
-          backgroundColor: quizMode ? theme.disabledFile : theme.file,
+          backgroundColor:
+            cardData.difficulty === 'hard'
+              ? quizMode
+                ? theme.disabledHard
+                : theme.hard
+              : quizMode
+              ? theme.disabledEasy
+              : theme.easy,
         }}
         onPress={() => {
           setCardModalVisible(true);
@@ -67,7 +74,7 @@ export default Card;
 const styles = StyleSheet.create({
   cardText: {
     fontSize: 20,
-    color: theme.fileText,
+    color: theme.cardText,
   },
 
   cardBtn: {

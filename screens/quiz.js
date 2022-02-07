@@ -6,11 +6,13 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
   const [index, setIndex] = useState(0);
   const [word, setWord] = useState();
   const [meaning, setMeaning] = useState();
+  const [difficulty, setDifficluty] = useState();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     setWord(cards[index].word);
     setMeaning(cards[index].meaning);
+    setDifficluty(cards[index].difficulty);
   }, [index]);
 
   const handleIndex = () => {
@@ -22,7 +24,18 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
     setVisible(!visible);
   };
   return (
-    <View style={styles.card}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: difficulty === 'hard' ? theme.hard : theme.easy,
+        borderRadius: 10,
+        width: '100%',
+        height: '100%',
+        padding: 20,
+      }}
+    >
       <Text style={styles.number}>
         {index + 1}/{cards.length}
       </Text>
@@ -57,16 +70,6 @@ const Quiz = ({ cards, finishQuiz, hide }) => {
 export default Quiz;
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: theme.card,
-    borderRadius: 10,
-    width: '100%',
-    height: '100%',
-    padding: 20,
-  },
   number: {
     fontSize: 30,
     fontWeight: 'bold',

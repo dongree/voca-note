@@ -12,6 +12,7 @@ import { theme } from '../../color';
 
 const AddModal = ({ visible, changeVisible, createData }) => {
   const [selectedType, setSelectedType] = useState('file');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('hard');
   const [word, setWord] = useState('');
   const [meaning, setMeaning] = useState('');
 
@@ -33,8 +34,13 @@ const AddModal = ({ visible, changeVisible, createData }) => {
     cleanTextInput();
   };
 
+  const handlePicker2 = (itemValue, itemIndex) => {
+    setSelectedDifficulty(itemValue);
+    cleanTextInput();
+  };
+
   const handleCreate = () => {
-    createData(selectedType, word, meaning, folderName);
+    createData(selectedType, word, meaning, folderName, selectedDifficulty);
     handleVisible(!visible);
     cleanTextInput();
   };
@@ -69,6 +75,15 @@ const AddModal = ({ visible, changeVisible, createData }) => {
           </Picker>
           {selectedType === 'file' ? (
             <View>
+              <Picker
+                selectedValue={selectedDifficulty}
+                onValueChange={(itemValue, itemIndex) =>
+                  handlePicker2(itemValue, itemIndex)
+                }
+              >
+                <Picker.Item label="easy" value="easy" />
+                <Picker.Item label="hard" value="hard" />
+              </Picker>
               <TextInput
                 style={styles.input}
                 onChangeText={handleWord}
