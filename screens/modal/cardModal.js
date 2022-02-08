@@ -88,6 +88,7 @@ const CardModal = ({ data, visible, changeVisible, editData }) => {
             shadowOpacity: 0.25,
             shadowRadius: 4,
             elevation: 5,
+            borderWidth: 5,
           }}
         >
           <View style={styles.checkbox}>

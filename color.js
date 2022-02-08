@@ -1,5 +1,5 @@
 export const theme = {
-  ManagementBg: '#ff8e47',
+  ManagementBg: '#cccccc',
   QuizBg: '#ffc847',
   titleText: 'black',
   hard: 'tomato',
@@ -9,16 +9,18 @@ export const theme = {
   cardText: 'black',
   folder: 'orange',
   folderText: 'black',
-  hidden: 'white',
-  btn: '#8f3700',
+  btn: 'black',
   btnText: 'white',
   absoluteBtn: 'black',
+  cardBox: '#ffffff',
+
+  hidden: 'white',
 
   addModalBg: 'white',
   addModalBtn: 'black',
   addModalBtnText: 'white',
 
-  cardModalBtn: 'orange',
+  cardModalBtn: 'black',
   cardModalBtnText: 'white',
   inputBg: 'white',
 

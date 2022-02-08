@@ -363,8 +363,9 @@ const styles = StyleSheet.create({
   },
 
   cards: {
-    backgroundColor: '#ededed',
+    backgroundColor: theme.cardBox,
     borderRadius: 10,
+    borderWidth: 3,
   },
 
   addBtn: {
