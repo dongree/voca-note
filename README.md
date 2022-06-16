@@ -18,8 +18,8 @@ expo go 다운 후 위 링크에서 qr스캔 후 이용이 가능하다.
 
 ### Preview
 
-메인화면  
-<img width="60%" src="https://user-images.githubusercontent.com/68095803/174105088-1d5397ff-7c9c-4e72-b282-90f6df778095.jpg"/>
+**메인화면**  
+<img width="30%" src="https://user-images.githubusercontent.com/68095803/174105088-1d5397ff-7c9c-4e72-b282-90f6df778095.jpg"/>
 
-퀴즈모드화면  
-<img width="60%" src="https://user-images.githubusercontent.com/68095803/174105201-0fb30f11-a96d-42fa-bef7-4939f663fe6b.jpg"/>
+**퀴즈모드화면**  
+<img width="30%" src="https://user-images.githubusercontent.com/68095803/174105201-0fb30f11-a96d-42fa-bef7-4939f663fe6b.jpg"/>
